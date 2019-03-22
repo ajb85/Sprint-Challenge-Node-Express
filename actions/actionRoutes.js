@@ -49,14 +49,15 @@ routes.post("/", async (req, res) => {
 
 routes.get("/:id", async (req, res) => {
   try {
-    const project = await db.get(req.params.id);
-    project
-      ? res.status(200).json(project)
-      : res.status(404).json({ message: "No project with that ID" });
+    const action = await db.get(req.params.id);
+    console.log(action);
+    action
+      ? res.status(200).json(action)
+      : res.status(404).json({ message: "No action with that ID" });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Internal error trying to get that project, try again"
+      message: "Internal error trying to get that action, try again"
     });
   }
 });
