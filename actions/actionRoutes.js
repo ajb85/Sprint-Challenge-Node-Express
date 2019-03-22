@@ -50,7 +50,6 @@ routes.post("/", async (req, res) => {
 routes.get("/:id", async (req, res) => {
   try {
     const action = await db.get(req.params.id);
-    console.log(action);
     action
       ? res.status(200).json(action)
       : res.status(404).json({ message: "No action with that ID" });
@@ -64,14 +63,14 @@ routes.get("/:id", async (req, res) => {
 
 routes.delete("/:id", async (req, res) => {
   try {
-    const project = await db.remove(req.params.id);
-    project
+    const action = await db.remove(req.params.id);
+    action
       ? res.status(200).end()
-      : res.status(404).json({ message: "No project found with that ID" });
+      : res.status(404).json({ message: "No action found with that ID" });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Internal error trying to delete that project, try again"
+      message: "Internal error trying to delete that action, try again"
     });
   }
 });
