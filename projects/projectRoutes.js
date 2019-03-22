@@ -28,7 +28,9 @@ routes.post("/", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "I encountered an error adding the user" });
+    res
+      .status(500)
+      .json({ message: "I encountered an error adding the project" });
   }
 });
 
