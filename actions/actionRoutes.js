@@ -1,5 +1,4 @@
 const express = require("express");
-const pdb = require("../data/helpers/actionModel.js");
 const db = require("../data/helpers/actionModel.js");
 
 const routes = express.Router();
