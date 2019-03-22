@@ -76,16 +76,18 @@ routes.put("/:id", async (req, res) => {
         ? res.status(200).json(project)
         : res.status(404).json({ message: "No project found at that ID" });
     } else {
-      res
-        .status(400)
-        .json({
-          message:
-            "I need name, description, and completed to update that project."
-        });
+      res.status(400).json({
+        message:
+          "I need name, description, and completed to update that project."
+      });
     }
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "" });
+    res
+      .status(500)
+      .json({
+        message: "Internal error trying to update that project, try again"
+      });
   }
 });
 
