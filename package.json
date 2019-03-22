@@ -5,7 +5,7 @@
   "main": "knexfile.js",
   "scripts": {
     "start": "node index.js",
-    "server": "nodemon index.js",
+    "server": "nodemon index.js -L",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
