@@ -18,26 +18,31 @@ routes.get("/", async (req, res) => {
 
 routes.post("/", async (req, res) => {
   try {
-    if (!verifyProjectID(req.body.project_id)) {
-      res.status(400).json({ message: "No project at that ID" });
-    }
-    if (req.body.description.length > 128) {
-      console.log("Length too long");
+    let validProject = await verifyProjectID(req.body.project_id);
+    if (!validProject) {
       res
         .status(400)
-        .json({ message: "Description must be under 128 characters" });
-    }
-    if (req.body.notes && req.body.description) {
-      const completed = req.body.hasOwnProperty("completed")
-        ? req.body.completed
-        : false;
-      const newAction = await db.insert({
-        ...req.body,
-        completed
-      });
-      res.status(201).json(newAction);
+        .json({ message: "No project at that ID" })
+        .end();
     } else {
-      res.status(400).json({ message: "Please include notes, description" });
+      if (req.body.description.length > 128) {
+        console.log("Length too long");
+        res
+          .status(400)
+          .json({ message: "Description must be under 128 characters" });
+      }
+      if (req.body.notes && req.body.description) {
+        const completed = req.body.hasOwnProperty("completed")
+          ? req.body.completed
+          : false;
+        const newAction = await db.insert({
+          ...req.body,
+          completed
+        });
+        res.status(201).json(newAction);
+      } else {
+        res.status(400).json({ message: "Please include notes, description" });
+      }
     }
   } catch (err) {
     console.log(err);
@@ -77,16 +82,30 @@ routes.delete("/:id", async (req, res) => {
 
 routes.put("/:id", async (req, res) => {
   try {
-    if (req.body.name && req.body.description) {
-      const project = await db.update(req.params.id, req.body);
-      project
-        ? res.status(200).json(project)
-        : res.status(404).json({ message: "No project found at that ID" });
+    let validProject = await verifyProjectID(req.body.project_id);
+    if (!validProject) {
+      res
+        .status(400)
+        .json({ message: "No project at that ID" })
+        .end();
     } else {
-      res.status(400).json({
-        message:
-          "I need name, description, and completed to update that project."
-      });
+      if (req.body.description.length > 128) {
+        console.log("Length too long");
+        res
+          .status(400)
+          .json({ message: "Description must be under 128 characters" });
+      }
+      if (req.body.notes && req.body.description) {
+        const project = await db.update(req.params.id, req.body);
+        project
+          ? res.status(200).json(project)
+          : res.status(404).json({ message: "No project found at that ID" });
+      } else {
+        res.status(400).json({
+          message:
+            "I need name, description, and completed to update that project."
+        });
+      }
     }
   } catch (err) {
     console.log(err);
