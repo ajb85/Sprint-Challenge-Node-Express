@@ -44,22 +44,45 @@ routes.get("/:id", async (req, res) => {
       : res.status(404).json({ message: "No project with that ID" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "" });
+    res.status(500).json({
+      message: "Internal error trying to get that project, try again"
+    });
   }
 });
 
 routes.delete("/:id", async (req, res) => {
   try {
-    const newProject = await db.insert(project);
+    const project = await db.remove(req.params.id);
+    project
+      ? res.status(200).end()
+      : res.status(404).json({ message: "No project found with that ID" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "" });
+    res.status(500).json({
+      message: "Internal error trying to delete that project, try again"
+    });
   }
 });
 
 routes.put("/:id", async (req, res) => {
   try {
-    const newProject = await db.insert(project);
+    if (
+      res.body.name &&
+      res.body.description &&
+      res.body.hasOwnProperty(completed)
+    ) {
+      const project = await db.insert(req.params.id, req.body);
+      project
+        ? res.status(200).json(project)
+        : res.status(404).json({ message: "No project found at that ID" });
+    } else {
+      res
+        .status(400)
+        .json({
+          message:
+            "I need name, description, and completed to update that project."
+        });
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "" });
