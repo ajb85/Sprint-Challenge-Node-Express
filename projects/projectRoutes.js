@@ -5,8 +5,8 @@ const routes = express.Router();
 
 routes.get("/", async (req, res) => {
   try {
-    const users = await db.get();
-    res.status(200).json(users);
+    const projects = await db.get();
+    res.status(200).json(projects);
   } catch (err) {
     console.log(err);
     res
@@ -17,18 +17,14 @@ routes.get("/", async (req, res) => {
 
 routes.post("/", async (req, res) => {
   try {
-    // So they aren't users, they're projects!
-    if (
-      res.body.name &&
-      res.body.description &&
-      res.body.hasOwnProperty(completed)
-    ) {
-      const newProject = await db.insert(project);
+    if (req.body.name && req.body.description) {
+      const completed = req.body.hasOwnProperty("completed")
+        ? req.body.completed
+        : false;
+      const newProject = await db.insert({ ...req.body, completed });
       res.status(201).json(newProject);
     } else {
-      res
-        .status(400)
-        .json({ message: "Please include name, description, and completed" });
+      res.status(400).json({ message: "Please include name, description" });
     }
   } catch (err) {
     console.log(err);
@@ -66,12 +62,8 @@ routes.delete("/:id", async (req, res) => {
 
 routes.put("/:id", async (req, res) => {
   try {
-    if (
-      res.body.name &&
-      res.body.description &&
-      res.body.hasOwnProperty(completed)
-    ) {
-      const project = await db.insert(req.params.id, req.body);
+    if (req.body.name && req.body.description) {
+      const project = await db.update(req.params.id, req.body);
       project
         ? res.status(200).json(project)
         : res.status(404).json({ message: "No project found at that ID" });
@@ -83,11 +75,9 @@ routes.put("/:id", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res
-      .status(500)
-      .json({
-        message: "Internal error trying to update that project, try again"
-      });
+    res.status(500).json({
+      message: "Internal error trying to update that project, try again"
+    });
   }
 });
 
