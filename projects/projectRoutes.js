@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../data/helpers/projectModel.js");
+const actionRoutes = require("../actions/actionRoutes.js");
 
 const routes = express.Router();
 
@@ -77,6 +78,21 @@ routes.put("/:id", async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "Internal error trying to update that project, try again"
+    });
+  }
+});
+
+routes.get("/:id/actions", async (req, res) => {
+  try {
+    const actions = await db.getProjectActions(req.params.id);
+    actions.length
+      ? res.status(200).json(actions)
+      : res.status(404).json({ message: "No actions under that ID" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message:
+        "Internal error trying to get that project or its actions, try again"
     });
   }
 });
