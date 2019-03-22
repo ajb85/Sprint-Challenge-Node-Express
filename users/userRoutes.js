@@ -15,12 +15,52 @@ routes.get("/", async (req, res) => {
   }
 });
 
-routes.post("/", (req, res) => {});
+routes.post("/", async (req, res) => {
+  try {
+    // So they aren't users, they're projects!
+    if (
+      res.body.name &&
+      res.body.description &&
+      res.body.hasOwnProperty(completed)
+    ) {
+      const newProject = await db.insert(project);
+      res.status(201).json(newProject);
+    } else {
+      res
+        .status(400)
+        .json({ message: "Please include name, description, and completed" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "I encountered an error adding the user" });
+  }
+});
 
-routes.get("/:id", (req, res) => {});
+routes.get("/:id", async (req, res) => {
+  try {
+    const project = await db.get(req.id);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "" });
+  }
+});
 
-routes.delete("/:id", (req, res) => {});
+routes.delete("/:id", async (req, res) => {
+  try {
+    const newProject = await db.insert(project);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "" });
+  }
+});
 
-routes.put("/:id", (req, res) => {});
+routes.put("/:id", async (req, res) => {
+  try {
+    const newProject = await db.insert(project);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "" });
+  }
+});
 
 module.exports = routes;
